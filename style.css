@@ -1,10 +1,10 @@
 body {
     margin: 0;
-    background: navy;
+    background: rgb(20, 193, 20);
     overflow: hidden;
     text-align: center;
 }
 
 #canvas {
-    background: lightgray;
+    background: black;
 }
