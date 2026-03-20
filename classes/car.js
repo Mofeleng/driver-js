@@ -34,8 +34,9 @@ class Car {
             }
         }
 
-        if (this.velocity > this.maxVelocity) { this.velocity =  this.maxVelocity; }
-        if (this.velocity < -this.maxVelocity) { this.velocity = -this.maxVelocity/2; }
+        const maxReverseVelocity = this.maxVelocity / 2;
+        if (this.velocity > this.maxVelocity) { this.velocity = this.maxVelocity; }
+        if (this.velocity < -maxReverseVelocity) { this.velocity = -maxReverseVelocity; }
 
         if (this.velocity > 0) { this.velocity -= this.friction; } 
         if (this.velocity < 0) { this.velocity += this.friction; } 
