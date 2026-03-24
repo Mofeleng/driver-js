@@ -1,17 +1,49 @@
 class Sensor {
     constructor(car) {
         this.car = car;
-        this.rayCount = 30;
+        this.rayCount = 5;
         this.rayLength=150;
-        this.raySpread = Math.PI/2; //45 deg
+        this.raySpread = Math.PI/2; //90 deg
 
         this.rays = [];
+        this.readings;
     }
 
-    update () {
+    update (roadBorders) {
         this.#castRays();
+        this.readings = [];
+
+        for (let i = 0; i < this.rays.length; i++) {
+            this.readings.push(
+                this.#getReadings(this.rays[i], roadBorders)
+            );
+        }
     }
 
+    #getReadings(ray, roadBorders) {
+        let touched = [];
+        for (let i = 0; i < roadBorders.length; i++) {
+            const touch = getIntersection(
+                ray[0],
+                ray[1],
+                roadBorders[i][0],
+                roadBorders[i][1]
+            );
+
+            if (touch) {
+                touched.push(touch);
+            }
+        }
+
+        if (touched.length == 0) {
+            return null;
+        }
+
+        const offsets = touched.map(e => e.offset);
+        const minOffset = Math.min(...offsets);
+
+        return touched.find(e => e.offset == minOffset);
+    }
     #castRays() {
         this.rays = [];
         for (let i = 0; i < this.rayCount; i++) {
@@ -33,11 +65,22 @@ class Sensor {
 
     draw(ctx) {
         for (let i = 0; i < this.rayCount; i++) {
+            let end = this.rays[i][1];
+            if (this.readings[i]) { end = this.readings[i]; };
+
             ctx.beginPath();
             ctx.lineWidth = 2;
             ctx.strokeStyle="red";
             ctx.moveTo(this.rays[i][0].x, this.rays[i][0].y);
-            ctx.lineTo(this.rays[i][1].x, this.rays[i][1].y);
+            ctx.lineTo(end.x, end.y);
+
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle="yellow";
+            ctx.moveTo(this.rays[i][1].x, this.rays[i][1].y);
+            ctx.lineTo(end.x, end.y);
 
             ctx.stroke();
         }
